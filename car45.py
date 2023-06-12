@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import time 
 
 urls='https://www.cars45.com/listing'
-pages=range(1,10)
+pages=range(1,134)
 
 def make_links(url=urls,p=pages):
      links=[]
@@ -33,6 +33,11 @@ async def main(links):
        async with aiohttp.ClientSession() as session:
               data=await get_all_details(session=session, links=links)
               return data
+       
+async def main1(links):
+       async with aiohttp.ClientSession() as session:
+              data=await get_all_details(session=session, links=links)
+              return data
 
 def parse_link(html):
     car_links=[]
@@ -43,50 +48,64 @@ def parse_link(html):
     return car_links
 
 def parser(html):
-    item=[]
-    soup=BeautifulSoup(html,'html.parser')
+    items=[]
+    for i in html:
+        item=[]
+        try:
+            soup=BeautifulSoup(i,'html.parser')
+            info=soup.find('div',class_='details-grid grid')
+            state=info.find('p',class_='main-details__region').text.strip().split(',')[0]
+            item.append(state)
+            price=info.find('h5',class_='main-details__name__price').text.strip().replace('₦','').strip()
+            item.append(price)
+            r=info.find_all('span',class_='tab-content__svg__title')
+            if len(r)>2:
+                r.pop(0)
+                fuel_type=r[0].text.strip()
+                transmission=r[1].text.strip()
+            else:
+                fuel_type=r[0].text.strip()
+                transmission=r[1].text.strip()
+            item.append(fuel_type)
+            item.append(transmission)
+            info=soup.find('div',class_='tab-content')
+            r=info.find('div',class_='general-info grid')
+            features=r.find_all('div')
+            c=[feature.text.strip().split('\n') for feature in features][:-2]
+            for a in c:
+                
+                if 'Make' in a[1] :
+                    item.append(a[0])
+                if 'Model' in a[1] :
+                    item.append(a[0])
+                if 'Condition' in a[1] :
+                    item.append(a[0])
 
-    info=soup.find('div',class_='details-grid grid')
-    state=info.find('p',class_='main-details__region').text.strip().split(',')[0]
-    item.append(state)
-    price=info.find('h5',class_='main-details__name__price').text.strip().replace('₦','').strip()
-    item.append(price)
-    r=info.find_all('span',class_='tab-content__svg__title')
-    if len(r)>2:
-        r.pop(0)
-        fuel_type=r[0].text.strip()
-        transmission=r[1].text.strip()
-    else:
-        fuel_type=r[0].text.strip()
-        transmission=r[1].text.strip()
-    item.append(fuel_type)
-    item.append(transmission)
-    info=soup.find('div',class_='tab-content')
-    r=info.find('div',class_='general-info grid')
-    features=r.find_all('div')
-    c=[feature.text.strip().split('\n') for feature in features][:-2]
-    for a in c:
-        if 'Make' in a[1] :
-            item.append(a[0])
-        if 'Model' in a[1] :
-            item.append(a[0])
-        if 'Condition' in a[1] :
-            item.append(a[0])
-
-        if 'Year of manufacture' in a[1] :
-            item.append(a[0])
-        if 'Mileage' in a[1] :
-            item.append(a[0])
-        if 'Engine Size' in a[1] :
-            item.append(a[0])
-    return item
+                if 'Year of manufacture' in a[1] :
+                    item.append(a[0])
+                if 'Mileage' in a[1] :
+                    item.append(a[0])
+                if 'Engine Size' in a[1] :
+                    item.append(a[0])
+            items.append(item)
+        except Exception as e:
+             print(e)
+    return items
         
 
 if __name__=="__main__":
+    start_time=time.perf_counter()
     links=make_links()
     result=asyncio.run(main(links=links))
     print("*"*35)
-    print(len(result))
     item=parse_link(html=result)
-    print(len(item))
+    items=asyncio.run(main(links=item))
+    data=parser(html=items)
+    columns=['index','state','price','fuel_type','transmmision','make','model','year','condition','millage']
+    df=pd.DataFrame(data,columns=columns)
+    df.to_csv('car.csv',index=False)
+    end_time=time.perf_counter()
+    print(f'finished at:{end_time-start_time/60 :0.4f}')
+
+    
   
