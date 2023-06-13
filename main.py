@@ -1,4 +1,3 @@
-import httpx
 import asyncio
 import aiohttp
 import pandas as pd
@@ -56,8 +55,10 @@ def parser(html):
             info=soup.find('div',class_='details-grid grid')
             state=info.find('p',class_='main-details__region').text.strip().split(',')[0]
             item.append(state)
-            price=info.find('h5',class_='main-details__name__price').text.strip().replace('₦','').strip()
+            price=info.find('h5',class_='main-details__name__price').text.strip().replace('₦','').replace(',','').strip()
             item.append(price)
+            name=info.find('h1',class_='main-details__name__title').text.strip()
+            item.append(name)
             r=info.find_all('span',class_='tab-content__svg__title')
             if len(r)>2:
                 r.pop(0)
@@ -94,18 +95,19 @@ def parser(html):
         
 
 if __name__=="__main__":
-    start_time=time.perf_counter()
+    start_time=time.time()
     links=make_links()
     result=asyncio.run(main(links=links))
     print("*"*35)
     item=parse_link(html=result)
     items=asyncio.run(main(links=item))
+    print("#"*35)
     data=parser(html=items)
-    columns=['index','state','price','fuel_type','transmmision','make','model','year','condition','millage']
+    columns=['state','price','name','fuel_type','transmmision','make','model','year','condition','millage','engine_size']
     df=pd.DataFrame(data,columns=columns)
     df.to_csv('car.csv',index=False)
-    end_time=time.perf_counter()
-    print(f'finished at:{end_time-start_time/60 :0.4f}')
+    end_time=time.time()
+    print(f'finished at:{end_time-start_time :0.4f} seconds')
 
     
   
