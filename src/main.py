@@ -97,11 +97,16 @@ def parser(html):
 if __name__=="__main__":
     start_time=time.time()
     links=make_links()
+    end_time=time.time()
+    print(f'finished link scraping at:{end_time-start_time :0.4f} seconds')
     result=asyncio.run(main(links=links))
     print("*"*35)
+    print(f'finished first detail scraping at:{end_time-start_time :0.4f} seconds')
     item=parse_link(html=result)
     items=asyncio.run(main(links=item))
     print("#"*35)
+    end_time=time.time()
+    print(f'finished detail scraping at:{end_time-start_time :0.4f} seconds')
     data=parser(html=items)
     columns=['state','price','name','fuel_type','transmmision','make','model','year','condition','millage','engine_size']
     df=pd.DataFrame(data,columns=columns)
