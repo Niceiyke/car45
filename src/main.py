@@ -116,6 +116,8 @@ def parser(html):
             items.append(item)
         except Exception as e:
              print(e)
+    dbitems=tuple(items)
+    
     return items
         
 
