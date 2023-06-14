@@ -3,6 +3,7 @@ import aiohttp
 import pandas as pd
 from bs4 import BeautifulSoup
 import time 
+import sqlite3
 
 urls='https://www.cars45.com/listing'
 pages=range(1,134)
@@ -46,6 +47,23 @@ def parse_link(html):
         [car_links.append(f"https://www.cars45.com{car['href']}" )for car in cars]
     return car_links
 
+def save_to_db(item):
+    try:
+        conn = sqlite3.connect("./item.db")
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """ CREATE TABLE IF NOT EXISTS cars(state TEXT,price FLOAT, name TEXT PRIMARY KEY,fuel_type TEXT,transmission TEXT,make TEXT,model TEXT,year INT,condition TEXT,mileage FLOAT,engine_size INT)
+        """
+        )
+
+        cursor.execute("""INSERT OR REPLACE INTO cars(state,price,name,fuel_type,transmission,make,model,year,condition,mileage,engine_size) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",(item['state'],item['price'],item['name'],item['fuel_type'],item['transmission'],item['make'],item['model'],item['year'],item['condition'],item['mileage'],item['engine_size']))
+        
+        conn.commit()
+    except Exception as e:
+         print(e)
+
+
 def parser(html):
     items=[]
     for i in html:
@@ -77,22 +95,30 @@ def parser(html):
                 
                 if 'Make' in a[1] :
                     item.append(a[0])
+                    make=(a[0])
                 if 'Model' in a[1] :
                     item.append(a[0])
+                    model=a[0]
                 if 'Condition' in a[1] :
                     item.append(a[0])
-
+                    condition=a[0]
                 if 'Year of manufacture' in a[1] :
                     item.append(a[0])
+                    year=a[0]
                 if 'Mileage' in a[1] :
                     item.append(a[0])
+                    mileage=a[0]
                 if 'Engine Size' in a[1] :
                     item.append(a[0])
+                    engine_size=a[0]
+            data={"state":state,"price":price,"name":name,"fuel_type":fuel_type,"transmission":transmission,"make":make,"model":model,"year":year,"condition":condition,"mileage":mileage,"engine_size":engine_size}
+            save_to_db(item=data)
             items.append(item)
         except Exception as e:
              print(e)
     return items
         
+
 
 if __name__=="__main__":
     start_time=time.time()
