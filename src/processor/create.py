@@ -10,11 +10,13 @@ def connect_to_db(item):
     """
     )
 
-    cursor.execute("""REPLACE INTO cars(state,price,name,fuel_type,transmission,make,model,year,condition,mileage,engine_size) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",(item['state'],item['price'],item['name'],item['fuel_type'],item['transmission'],item['make'],item['model'],item['year'],item['condition'],item['mileage'],item['engine_size']))
+    conn.executemany("""REPLACE INTO cars(state,price,name,fuel_type,transmission,make,model,year,condition,mileage,engine_size) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",item)
     print('run sucess')
     conn.commit()
 
 
-item={"state":"abia","price":234555.43,"name":"fshhdjhd dhhdh 3hd d ","fuel_type":"petrol","transmission":"Automatic","make":"audi","model":"dggsj","year":2009,"condition":"nigerian","mileage":23333.32,"engine_size":344}
+item=[('abia state',234555.43,"fshjjjjhd dhhdh 3hd d ","petrol","Automatic",
+       "audi","dggsj",2009,"nigerian",23333.32,344),("abia lagos",234555.43,"fsqwwdjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjyu7d dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjhd dqhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjhd rthhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjhd dheeh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc b3e dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjhd chdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"hjgc bbjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"hjgc bbjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"bjhd dhhdh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344),("abia",234555.43,"fshjgc bbjh 3hd d ","petrol","Automatic","audi","dggsj",2009,"nigerian",23333.32,344)]
 
+print(len(item))
 connect_to_db(item=item)
