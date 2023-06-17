@@ -4,6 +4,9 @@
 name: car45_scraper
 
 on:
+  schedule:
+    -cron: '0 */2 * * *' #runs every 2hours
+    
   workflow_dispatch:
 
 jobs:
@@ -28,9 +31,9 @@ jobs:
 
     - name: Commit files
       run: |
-        git config --local user.email "test@test.com"
-        git config --local user.name "Test"
-        git commit -a -m "Add changes"
+        git config --local user.email "niceiyke@github.com"
+        git config --local user.name "Niceiyk"
+        git commit -a -m "updated db"
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
