@@ -6,8 +6,8 @@ name: car45_scraper
 on:
   schedule:
     -cron: '0 */2 * * *' #runs every 2hours
-    
-  workflow_dispatch:
+
+ 
 
 jobs:
   build:
