@@ -1,4 +1,6 @@
 from bs4 import BeautifulSoup
+from src.processor.database import save_to_db
+import pandas as pd
 
 def parser(html):
     items=[]
@@ -39,7 +41,12 @@ def parser(html):
             items.append(item)
         except Exception as e:
              print(f'error{e}')
-    print(len(items))
-    return items
+
+    save_to_db(item=items)
+
+    columns=['state','price','name','fuel_type','transmission','make','model','year','condition','mileage','engine_size']
+    df=pd.DataFrame(items,columns=columns)
+    df.to_csv('./car45.csv')
+    return
         
 

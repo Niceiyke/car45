@@ -1,6 +1,5 @@
 import asyncio
 import time 
-from src.processor.database import save_to_db
 from src.processor.processor import make_links,parse_link,extract_details
 from processor.parser_html import parser
 
@@ -16,9 +15,7 @@ if __name__=="__main__":
 
     items=asyncio.run(extract_details(links=item))
 
-    data=parser(html=items)
-
-    save_to_db(item=data)
+    parser(html=items)
 
     end_time=time.time()
 
