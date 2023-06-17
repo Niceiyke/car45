@@ -25,3 +25,16 @@ jobs:
     - name: run scripts
       run: |
         python src/main.py
+
+    - name: commit file
+      run: |
+        git config --local user.email "niceiyke@github.com"
+        git config --local user.name "niceiyke"
+        git add -A
+        git diff-index --quiet HEAD || (git commit -a -m "updated db" --allow-empty)
+
+    name: push changes
+    uses: ad-m/github-push-action@v0.6.0
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      branch: main
