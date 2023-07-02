@@ -7,5 +7,5 @@ setup(
     author='niceiyke',
     author_email='niceiyke04@gmail.com',
     packages=find_packages(),
-    install_requires=['aiohttp','bs4','beautifulsoup4']
+    install_requires=['aiohttp','bs4','beautifulsoup4','panadas']
 )
